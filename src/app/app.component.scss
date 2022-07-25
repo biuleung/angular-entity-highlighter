@@ -11,3 +11,35 @@
 #content {
     line-height: 200%;
 }
+
+.clear {
+    background-color: #ea604b;
+    border: none;
+    background-image: url(../assets/images/icon-remove-circle.svg);
+    background-size: 16px;
+    position: absolute;
+    top: -14px;
+    left: 3px;
+    border-radius: 50%;
+    height: 16px;
+    width: 16px;
+    // display: none;
+}
+
+.operation-btn {
+    height: 35px;
+    width: 80px;
+}
+
+.marked:hover .clear {
+    // background-color: #ea604b;
+    // border: none;
+    // background-image: url(../assets/images/icon-remove-circle.svg);
+    // background-size: 16px;
+    // position: absolute;
+    // top: -14px;
+    // left: 3px;
+    // border-radius: 50%;
+    // height: 16px;
+    // width: 16px;
+}
