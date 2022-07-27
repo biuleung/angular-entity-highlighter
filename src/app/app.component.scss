@@ -1,15 +1,30 @@
-// .highlight {
-//     background-color: rgba(51, 170, 51, .2);
-//   }
-  
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 2fr;
+    grid-template-areas: "textArea textArea"
+                         "entities markedTextTable";
+    column-gap: 2em;
+    max-width: 95vw;
+}
 
-// span
-// {
-//     color:red;
-// };
+.textArea {
+    grid-area: textArea;
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 2em;
+}
+
+.entities {
+    grid-area: entities;
+}
+
+.table {
+    grid-area: markedTextTable;
+}
 
 #content {
-    line-height: 200%;
+    margin: 0;
+    line-height: 300%;
 }
 
 .clear {
@@ -28,7 +43,11 @@
 
 .operation-btn {
     height: 35px;
-    width: 80px;
+    // width: 80px;
+    border: 1px solid gray;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
 }
 
 .marked:hover .clear {
@@ -43,3 +62,23 @@
     // height: 16px;
     // width: 16px;
 }
+
+@media screen and (max-width: 992px) {
+    .container {
+        grid-template-columns: auto;
+        grid-template-rows: 1fr auto auto;
+        grid-template-areas: "textArea"
+                             "entities" 
+                             "markedTextTable";
+        row-gap: 1em;
+        max-width: 98vw;
+    }
+
+    .textArea {
+        grid-area: textArea;
+        border-bottom: 1px solid lightgray;
+        margin-bottom: 0;
+    }
+}
+
+

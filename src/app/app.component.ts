@@ -29,9 +29,9 @@ export class AppComponent {
   }
   ];
   newEntity: string = '';
+
   selectedEntity: string = this.entities[0].name;
   MarkedTextMap = new Map<string, { markedText: string, entityName: string }>();
-
   entityColorMap = new Map<string, string>();
 
   constructor(
@@ -50,7 +50,6 @@ export class AppComponent {
     this.content =
       'Mr Lavrov said that Western nations "aggressiveness" in imposing sanctions on Russia indicated one simple conclusion: "It is not about Ukraine, it is about the future of the world order. "They say everybody must support a rules - based world order, and the rules are written depending on what specific situation the West wants to resolve in its own favour." Earlier, Mr Lavrov held talks with his Egyptian counterpart, Sameh Shoukry. Egypt has significant ties with Russia, which supplies wheat, weapons and - until the invasion of Ukraine began - large numbers of tourists. After his talks with Mr Shoukry, Mr Lavrov told a joint news conference that the West was prolonging the conflict even though it understood "what and whose end it will be".'
     // this.content = '與此同時，世界上一些最發達的經濟體已經出現人口下降，生育率降至每名婦女生育2.1個孩子以下，這被稱為"人口替代率"。（注：這一概念指的是一個地區人口出生與死亡能維持某種相對的平衡）報告稱，到2050年，有61個國家的人口將減少至少1%。中國是世界上生育率最低的國家之一（平均每名婦女生育1.15個孩子），中國預計其人口將於明年開始下降，比此前預計的要早得多。中國在2016年全面放棄了獨生子女政策，並出台了鼓勵夫婦生育兩個或兩個以上孩子的政策。'
-
   }
 
   convertContentToHtmlContent() {
@@ -76,12 +75,14 @@ export class AppComponent {
   }
 
   onNewEntity() {
-    this.entities.push({
-      name: this.newEntity,
-      colorCode: `rgba(${Math.random() * (255)}, ${Math.random() * (255)}, ${Math.random() * (255)}, .2)`
-    });
-    this.setupEntityColorMap();
-    this.newEntity = '';
+    if (this.newEntity.trim()) {
+      this.entities.push({
+        name: this.newEntity,
+        colorCode: `rgba(${Math.random() * (255)}, ${Math.random() * (255)}, ${Math.random() * (255)}, .2)`
+      });
+      this.setupEntityColorMap();
+      this.newEntity = '';
+    }
   }
 
   markSelectedText() {
@@ -125,8 +126,8 @@ export class AppComponent {
 
   convertMarkedTextKeyToSelectionIndices(mapKey: string): number[] {
     if (mapKey && mapKey.trim() !== '') {
-      const range = mapKey.split(',')
-      return this.getSelectionIndexRange(range[0], (parseInt(range[1]) - parseInt(range[0]) + 1))
+      const range = mapKey.split(',');
+      if (range.length === 2) return this.getSelectionIndexRange(range[0], (parseInt(range[1]) - parseInt(range[0]) + 1))
     }
     return [];
   }
@@ -178,17 +179,20 @@ export class AppComponent {
   }
 
   attachEntityNameToMarkedText(selectionIndices: number[], entityName = this.selectedEntity) {
-    const entityNameSpan = this.createEntityNameSpan(entityName);
-    const lastCharElementOfSelection = this.el.nativeElement.querySelector(`#char-${selectionIndices[selectionIndices.length - 1]}`);
-    this.renderer.appendChild(lastCharElementOfSelection, entityNameSpan);
+    if (selectionIndices.length) {
+      const entityNameSpan = this.createEntityNameSpan(entityName);
+      const lastCharElementOfSelection = this.el.nativeElement.querySelector(`#char-${selectionIndices[selectionIndices.length - 1]}`);
+      this.renderer.appendChild(lastCharElementOfSelection, entityNameSpan);
+    }
   }
 
   attachRemoveBtnToMarkedText(selectionIndices: number[]) {
-    const entityRemoveBtn = this.createRemoveBtn(selectionIndices);
-    const lastCharElementOfSelection = this.el.nativeElement.querySelector(`#char-${selectionIndices[selectionIndices.length - 1]}`);
-    this.renderer.appendChild(lastCharElementOfSelection, entityRemoveBtn);
+    if (selectionIndices.length) {
+      const entityRemoveBtn = this.createRemoveBtn(selectionIndices);
+      const lastCharElementOfSelection = this.el.nativeElement.querySelector(`#char-${selectionIndices[selectionIndices.length - 1]}`);
+      this.renderer.appendChild(lastCharElementOfSelection, entityRemoveBtn);
+    }
   }
-
 
   removeUnmarkTextStyling(selectionIndices: number[]) {
     selectionIndices.length && selectionIndices.forEach(index => {
@@ -200,18 +204,19 @@ export class AppComponent {
 
   removeUnmarkTextAttachedElements(selectionIndices: number[]) {
     const lastCharElementOfSelection: HTMLElement = this.el.nativeElement.querySelector(`#char-${selectionIndices[selectionIndices.length - 1]}`);
-
-    // If the node is a text node, the nodeType property will return 3.
-    while (lastCharElementOfSelection.hasChildNodes() && lastCharElementOfSelection?.lastChild?.nodeType !== 3) {
-      if (lastCharElementOfSelection.lastChild) {
-        lastCharElementOfSelection.removeChild(lastCharElementOfSelection.lastChild);
+    if (lastCharElementOfSelection) {
+      // If the node is a text node, the nodeType property will return 3.
+      while (lastCharElementOfSelection.hasChildNodes() && lastCharElementOfSelection?.lastChild?.nodeType !== 3) {
+        if (lastCharElementOfSelection.lastChild) {
+          lastCharElementOfSelection.removeChild(lastCharElementOfSelection.lastChild);
+        }
       }
     }
   }
 
   removeEntityNameFromMarkedText(selectionIndices: number[]) {
     const lastCharElementOfSelection: HTMLElement = this.el.nativeElement.querySelector(`#char-${selectionIndices[selectionIndices.length - 1]}`);
-    this.renderer.removeChild(lastCharElementOfSelection, lastCharElementOfSelection.childNodes[1]);
+    lastCharElementOfSelection && this.renderer.removeChild(lastCharElementOfSelection, lastCharElementOfSelection.childNodes[1]);
   }
 
   mouseUp() {
@@ -261,7 +266,7 @@ export class AppComponent {
 
   onMarkedTextLeave(textKey: string) {
     const hoveredSelectionIndices = this.convertMarkedTextKeyToSelectionIndices(textKey);
-    hoveredSelectionIndices.forEach((item, index) => {
+    hoveredSelectionIndices.forEach((item) => {
       this.renderer.setStyle(
         this.el.nativeElement.querySelector(`#char-${item}`), 'border', 'none'
       );
@@ -272,16 +277,23 @@ export class AppComponent {
     this.MarkedTextMap.delete(textKey);
     this.removeUnmarkTextStyling(this.convertMarkedTextKeyToSelectionIndices(textKey));
     this.removeUnmarkTextAttachedElements(this.convertMarkedTextKeyToSelectionIndices(textKey));
-
   }
 
-  onMarkAll(entityName: string, markedText: string) {
+  onMarkAll(entityName: string, markedText: string, textKey: string) {
+    this.onMarkedTextLeave(textKey);
     const indices = [...this.content.matchAll(new RegExp(markedText, 'gi'))].map(a => a.index).map(index => index && index);
+    // const indices: number[] = [];
+    // let match;
+    // const regexp = new RegExp(markedText, 'gi');
+    // while ((match = regexp.exec(this.content)) !== null) {
+    //   indices.push(match.index)
+    // }
+
     let allOccurencesMapKey = indices.map(index => index + ',' + (typeof index === 'number' && index + markedText.length - 1));
 
     allOccurencesMapKey.forEach(a => {
       if (this.MarkedTextMap.get(a)) {
-        allOccurencesMapKey = allOccurencesMapKey.filter(item => a !== item)
+        allOccurencesMapKey = allOccurencesMapKey.filter(item => a !== item);
       }
     });
     allOccurencesMapKey.forEach(mk => {
