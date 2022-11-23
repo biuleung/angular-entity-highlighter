@@ -159,15 +159,3 @@ export class AppComponent {
   }
 
 }
-
-
-
-// background-image: 
-//     linear-gradient(
-//       rgba(120,0,200,0.5),
-//       rgba(120,0,200,0.5)
-//     ),
-//     linear-gradient(
-//       rgba(200,200,200,0.5),
-//       rgba(200,200,200,0.5)
-//     );
