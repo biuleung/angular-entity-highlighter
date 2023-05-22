@@ -1,13 +1,115 @@
-// .highlight {
-//     background-color: rgba(51, 170, 51, .2);
-//   }
-  
 
-// span
-// {
-//     color:red;
-// };
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 4fr;
+    grid-template-areas: "entities entities"
+                         "textArea markedTextTable";
+    column-gap: 2em;
+    row-gap: 1em;
+    max-width: 95vw;
+}
+
+.textArea {
+    grid-area: textArea;
+    // border-bottom: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+    margin-bottom: 2em;
+    padding-right: 1em;
+}
+
+.entities {
+    grid-area: entities;
+    padding-bottom: 0.5em;
+    padding-top: 0.5em;
+    border-bottom: 1px solid lightgray;
+    position: sticky;
+    top: 0.5em;
+    background: white;
+    z-index: 1001;
+
+}
+
+.table {
+    max-height: 95vh;
+    overflow-y: scroll;
+    grid-area: markedTextTable;
+}
+
+.table-header {
+    position: sticky;
+    top: 0px;
+}
+
+.table::-webkit-scrollbar {
+    width: 5px;
+  }
+
+.table::-webkit-scrollbar-track {
+    background: white;
+  }
+
+  .table::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
 
 #content {
-    line-height: 200%;
+    margin: 0;
+    line-height: 300%;
 }
+
+.clear {
+    background-color: #ea604b;
+    border: none;
+    background-image: url(../assets/images/icon-remove-circle.svg);
+    background-size: 16px;
+    position: absolute;
+    top: -14px;
+    left: 3px;
+    border-radius: 50%;
+    height: 16px;
+    width: 16px;
+}
+
+.operation-btn {
+    height: 35px;
+    // width: 80px;
+    border: 1px solid gray;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+@media screen and (max-width: 992px) {
+    .container {
+        grid-template-columns: auto;
+        grid-template-rows: 1fr auto auto;
+        grid-template-areas: 
+                            //  "entities"
+                             "textArea"
+                             "entities"
+                             "markedTextTable";
+        row-gap: 0.5em;
+        max-width: 98vw;
+    }
+
+    .textArea {
+        grid-area: textArea;
+        border-bottom: 1px solid lightgray;
+        border-right: none;
+        margin-bottom: 0;
+    }
+
+    .entities {
+        // position: inherit;
+        bottom: 0;;
+        border: none;
+    }
+}
+
+
